@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Search, Loader2 } from 'lucide-react';
+import SpkDetailModal from '../components/SpkDetailModal';
 
 // Utility untuk warna badge
 const getStatusColor = (status: string) => {
@@ -29,6 +30,7 @@ export default function ViewAllSpkPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('Semua');
+  const [selectedSpk, setSelectedSpk] = useState<any>(null);
 
   useEffect(() => {
     fetchLatestSpk();
@@ -124,7 +126,11 @@ export default function ViewAllSpkPage() {
                 const statusColor = getStatusColor(status);
 
                 return (
-                  <div key={spk.id} className="bg-black border border-neutral-800 p-5 rounded-2xl hover:border-neutral-600 transition-colors cursor-pointer group flex flex-col h-full">
+                  <div 
+                    key={spk.id} 
+                    className="bg-black border border-neutral-800 p-5 rounded-2xl hover:border-neutral-600 transition-colors cursor-pointer group flex flex-col h-full"
+                    onClick={() => setSelectedSpk(spk)}
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <span className="text-[10px] font-bold px-2 py-1 bg-neutral-800 text-neutral-400 rounded-lg group-hover:bg-[#F7C600]/10 group-hover:text-[#F7C600] transition-colors">
                         {spk.tipe_pesanan}
@@ -158,6 +164,14 @@ export default function ViewAllSpkPage() {
           )}
         </div>
       </main>
+
+      {/* Render Modal If SPK is Selected */}
+      {selectedSpk && (
+        <SpkDetailModal 
+          spk={selectedSpk} 
+          onClose={() => setSelectedSpk(null)} 
+        />
+      )}
     </div>
   );
 }
