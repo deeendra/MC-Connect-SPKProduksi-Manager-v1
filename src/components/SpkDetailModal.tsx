@@ -25,7 +25,7 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
   if (!spk) return null;
 
   const totalBaju = spk.items?.reduce((acc: number, item: any) => acc + (item.total_qty || 0), 0) || 0;
-  const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_extras_url;
+  const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_ext_url;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">

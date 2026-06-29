@@ -108,7 +108,7 @@ export default function ViewAllSpkPage() {
                 let currentIndex = PRODUCTION_STAGES.findIndex(s => s.matches.includes(status));
                 if (currentIndex === -1) currentIndex = 0; // fallback
 
-                const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_extras_url;
+                const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_ext_url;
                 
                 const rawId = spk.spk_id_masked || spk.spk_id || '';
                 const maskedId = rawId.length > 9 ? `${rawId.substring(0, 6)}...${rawId.substring(rawId.length - 3)}` : rawId;

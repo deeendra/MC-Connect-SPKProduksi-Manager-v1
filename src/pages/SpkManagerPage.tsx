@@ -80,7 +80,7 @@ export default function SpkManagerPage() {
                   {stageSpks.map(spk => {
                     const rawId = spk.order_id || spk.spk_id || 'UNKNOWN';
                     const maskedId = rawId.length > 9 ? `${rawId.substring(0,6)}...${rawId.substring(rawId.length-3)}` : rawId;
-                    const previewUrl = spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_extras_url;
+                    const previewUrl = spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_ext_url;
                     
                     return (
                       <div key={spk.id} className="bg-[#111] border border-[#222] rounded-xl p-3 flex flex-col shadow-sm group hover:border-mandiri-primary/30 transition-colors">
