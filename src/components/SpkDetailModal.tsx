@@ -1,5 +1,12 @@
-import { X, Printer, ExternalLink, Calendar, Phone, User, Package, FileText } from 'lucide-react';
+import { X, Printer, ExternalLink, Calendar, Phone, User, Package, FileText, Image as ImageIcon } from 'lucide-react';
 import { useEffect } from 'react';
+
+const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', 'XXXL', '4XL', '5XL', '6XL', 'ALL SIZE'];
+const getSizeRank = (size: string) => {
+  const upper = (size || '').toString().toUpperCase().trim();
+  const index = SIZE_ORDER.indexOf(upper);
+  return index === -1 ? 999 : index;
+};
 
 interface SpkDetailModalProps {
   spk: any;
@@ -18,6 +25,7 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
   if (!spk) return null;
 
   const totalBaju = spk.items?.reduce((acc: number, item: any) => acc + (item.total_qty || 0), 0) || 0;
+  const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_extras_url;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
@@ -51,7 +59,25 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
           
           {/* Metadata Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Box 1: Preview Desain */}
+            <div className="bg-black/50 p-5 rounded-2xl border border-neutral-800 flex flex-col">
+              <h3 className="text-sm font-black text-white mb-4 flex items-center gap-2">
+                <ImageIcon size={16} className="text-[#F7C600]" /> Preview Desain
+              </h3>
+              <div className="w-full aspect-square min-h-[200px] bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800 flex items-center justify-center">
+                {previewUrl ? (
+                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="text-neutral-600 flex flex-col items-center p-4">
+                    <ImageIcon size={32} className="mb-2 opacity-50" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-center">No Image<br/>Available</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Box 2: Data Pemesan */}
             <div className="bg-black/50 p-5 rounded-2xl border border-neutral-800">
               <h3 className="text-sm font-black text-white mb-4 flex items-center gap-2">
                 <User size={16} className="text-[#F7C600]" /> Data Pemesan
@@ -131,27 +157,57 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
                     </div>
 
                     {/* Size Table */}
-                    <div className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
-                      <table className="w-full text-left text-xs">
+                    <div className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-x-auto custom-scrollbar">
+                      <table className="w-full text-left text-xs min-w-[300px]">
                         <thead className="bg-neutral-800 text-gray-400 font-bold">
                           <tr>
-                            <th className="px-3 py-2">Size</th>
-                            {item.tipe_rincian === 'DENGAN NAMA' && <th className="px-3 py-2">Nickname</th>}
-                            {item.tipe_rincian === 'DENGAN NAMA' && <th className="px-3 py-2">No</th>}
-                            {item.kategori_model === 'Aksesoris' && <th className="px-3 py-2">Catatan</th>}
-                            <th className="px-3 py-2 text-right">Qty</th>
+                            {item.tipe_rincian === 'DENGAN NAMA' ? (
+                              <>
+                                <th className="px-3 py-2 w-10">No.</th>
+                                <th className="px-3 py-2">Nama di Kaos</th>
+                                <th className="px-3 py-2 text-right w-20">Size</th>
+                              </>
+                            ) : item.kategori_model === 'Aksesoris' ? (
+                              <>
+                                <th className="px-3 py-2">Catatan Tambahan</th>
+                                <th className="px-3 py-2 text-right w-20">Qty</th>
+                              </>
+                            ) : (
+                              <>
+                                <th className="px-3 py-2">Size</th>
+                                <th className="px-3 py-2 text-right w-20">Qty</th>
+                              </>
+                            )}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-neutral-800 text-gray-300">
-                          {item.data_ukuran?.map((sizeObj: any, sIdx: number) => (
-                            <tr key={sIdx} className="hover:bg-white/5">
-                              <td className="px-3 py-2 font-bold">{sizeObj.size || sizeObj.size_print_aksesoris || '-'}</td>
-                              {item.tipe_rincian === 'DENGAN NAMA' && <td className="px-3 py-2">{sizeObj.custom_nickname || '-'}</td>}
-                              {item.tipe_rincian === 'DENGAN NAMA' && <td className="px-3 py-2">{sizeObj.custom_number || '-'}</td>}
-                              {item.kategori_model === 'Aksesoris' && <td className="px-3 py-2">{sizeObj.size_print_aksesoris}</td>}
-                              <td className="px-3 py-2 text-right font-bold">{sizeObj.qty}</td>
-                            </tr>
-                          ))}
+                          {(() => {
+                            const sortedData = [...(item.data_ukuran || [])].sort((a, b) => 
+                              getSizeRank(a.ukuran || a.ukuran_print_aksesoris) - getSizeRank(b.ukuran || b.ukuran_print_aksesoris)
+                            );
+                            
+                            return sortedData.map((sizeObj: any, sIdx: number) => (
+                              <tr key={sIdx} className="hover:bg-white/5">
+                                {item.tipe_rincian === 'DENGAN NAMA' ? (
+                                  <>
+                                    <td className="px-3 py-2 text-gray-500 font-medium">{sIdx + 1}</td>
+                                    <td className="px-3 py-2 font-medium">{sizeObj.nama || '-'}</td>
+                                    <td className="px-3 py-2 text-right font-black text-[#F7C600]">{sizeObj.ukuran || '-'}</td>
+                                  </>
+                                ) : item.kategori_model === 'Aksesoris' ? (
+                                  <>
+                                    <td className="px-3 py-2">{sizeObj.ukuran_print_aksesoris || '-'}</td>
+                                    <td className="px-3 py-2 text-right font-bold">{sizeObj.qty || 0}</td>
+                                  </>
+                                ) : (
+                                  <>
+                                    <td className="px-3 py-2 font-bold">{sizeObj.ukuran || '-'}</td>
+                                    <td className="px-3 py-2 text-right font-bold">{sizeObj.qty || 0}</td>
+                                  </>
+                                )}
+                              </tr>
+                            ));
+                          })()}
                         </tbody>
                       </table>
                     </div>

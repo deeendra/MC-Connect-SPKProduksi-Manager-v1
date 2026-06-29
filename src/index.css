@@ -1,25 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-black text-gray-100 font-sans antialiased;
+    @apply text-gray-200 font-sans antialiased;
+    background-color: #0A0A0A;
   }
 }
 
-/* Custom Scrollbar for Bumblebee Dark Mode */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #080808;
-}
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #f7c600;
+@layer utilities {
+  .glass-panel {
+    @apply backdrop-blur-md shadow-lg;
+    background-color: rgba(17, 17, 17, 0.8);
+    border: 1px solid #262626;
+  }
+  
+  .glass-panel-hover:hover {
+    background-color: rgba(17, 17, 17, 0.9);
+    border-color: rgba(247, 198, 0, 0.3);
+    box-shadow: 0 0 15px rgba(247, 198, 0, 0.15);
+    transition: all 300ms;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #0A0A0A;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#333333] rounded-full transition-colors;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #262626;
+  }
 }

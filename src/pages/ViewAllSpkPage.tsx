@@ -1,29 +1,10 @@
 import { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, Image as ImageIcon, Calendar as CalendarIcon } from 'lucide-react';
 import SpkDetailModal from '../components/SpkDetailModal';
+import { PRODUCTION_STAGES } from '../lib/constants';
 
-// Utility untuk warna badge
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ANTRIAN PRINT': return 'bg-orange-500/20 text-orange-400 border-orange-500/50';
-    case 'PRINTING': return 'bg-blue-500/20 text-blue-400 border-blue-500/50';
-    case 'SELESAI PRINT': return 'bg-cyan-500/20 text-cyan-400 border-cyan-500/50';
-    case 'PRESS': return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/50';
-    case 'SELESAI PRESS': return 'bg-indigo-400/20 text-indigo-300 border-indigo-400/50';
-    case 'SORTIR & HITUNG': return 'bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-500/50';
-    case 'POLA KURANG LENGKAP': return 'bg-red-500/20 text-red-400 border-red-500/50';
-    case 'JAHIT': return 'bg-purple-500/20 text-purple-400 border-purple-500/50';
-    case 'SELESAI JAHIT': return 'bg-violet-500/20 text-violet-400 border-violet-500/50';
-    case 'PACKING': return 'bg-pink-500/20 text-pink-400 border-pink-500/50';
-    case 'SELESAI PACKING': return 'bg-rose-500/20 text-rose-400 border-rose-500/50';
-    case 'SIAP DIKIRIM/DIAMBIL': return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50';
-    case 'DIKIRIM':
-    case 'DIAMBIL': return 'bg-green-500/20 text-green-400 border-green-500/50';
-    default: return 'bg-neutral-800 text-gray-400 border-neutral-700'; // Default fallback
-  }
-};
 
 export default function ViewAllSpkPage() {
   const [spkList, setSpkList] = useState<any[]>([]);
@@ -76,14 +57,15 @@ export default function ViewAllSpkPage() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col p-4 md:p-6 w-full font-sans relative">
-      <header className="mb-6">
-        <h2 className="text-2xl font-black text-white">View All SPK</h2>
-        <p className="text-gray-500 text-sm font-medium">Monitoring Real-time Status SPK Produksi</p>
-      </header>
+    <div className="h-full overflow-y-auto custom-scrollbar flex flex-col p-4 md:p-6 w-full font-sans relative">
+      <div className="max-w-7xl mx-auto w-full flex flex-col flex-1">
+        <header className="mb-6 shrink-0">
+          <h2 className="text-2xl font-black text-white">View All SPK</h2>
+          <p className="text-gray-500 text-sm font-medium">Monitoring Real-time Status SPK Produksi</p>
+        </header>
 
-      <main className="flex-1 space-y-6">
-        <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-3xl shadow-xl">
+        <main className="flex-1 space-y-6 flex flex-col">
+        <div className="glass-panel p-6 rounded-3xl">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             
             {/* Tabs */}
@@ -94,8 +76,8 @@ export default function ViewAllSpkPage() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-colors ${
                     activeTab === tab 
-                    ? 'bg-[#F7C600] text-black shadow-[0_0_15px_rgba(247,198,0,0.3)]' 
-                    : 'bg-black border border-neutral-800 text-gray-400 hover:text-white'
+                    ? 'bg-mandiri-primary text-black shadow-[0_0_15px_rgba(247,198,0,0.3)]' 
+                    : 'bg-mandiri-bg border border-mandiri-border text-gray-400 hover:text-white'
                   }`}
                 >
                   {tab}
@@ -110,7 +92,7 @@ export default function ViewAllSpkPage() {
                 placeholder="Cari ID SPK / Nama..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-black border border-neutral-800 rounded-xl text-sm text-white focus:border-[#F7C600] outline-none transition-colors"
+                className="w-full pl-10 pr-4 py-2 bg-mandiri-bg border border-mandiri-border rounded-xl text-sm text-white focus:border-mandiri-primary focus:ring-1 focus:ring-mandiri-primary outline-none transition-colors"
               />
             </div>
           </div>
@@ -123,34 +105,84 @@ export default function ViewAllSpkPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {filteredSpk.map((spk) => {
                 const status = spk.status_produksi || 'ANTRIAN PRINT';
-                const statusColor = getStatusColor(status);
+                let currentIndex = PRODUCTION_STAGES.findIndex(s => s.matches.includes(status));
+                if (currentIndex === -1) currentIndex = 0; // fallback
+
+                const previewUrl = spk.gambar_preview || spk.preview_design_cod_url || spk.preview_design_extras_url || spk.preview_image_mcd_url || spk.preview_image_cod_url || spk.preview_image_extras_url;
+                
+                const rawId = spk.spk_id_masked || spk.spk_id || '';
+                const maskedId = rawId.length > 9 ? `${rawId.substring(0, 6)}...${rawId.substring(rawId.length - 3)}` : rawId;
 
                 return (
                   <div 
                     key={spk.id} 
-                    className="bg-black border border-neutral-800 p-5 rounded-2xl hover:border-neutral-600 transition-colors cursor-pointer group flex flex-col h-full"
+                    className="glass-panel glass-panel-hover p-4 rounded-2xl cursor-pointer group flex flex-col h-full"
                     onClick={() => setSelectedSpk(spk)}
                   >
-                    <div className="flex justify-between items-start mb-3">
-                      <span className="text-[10px] font-bold px-2 py-1 bg-neutral-800 text-neutral-400 rounded-lg group-hover:bg-[#F7C600]/10 group-hover:text-[#F7C600] transition-colors">
-                        {spk.tipe_pesanan}
-                      </span>
-                      <span className="text-[10px] font-bold text-gray-500">
-                        {spk.created_at?.toDate ? new Date(spk.created_at.toDate()).toLocaleDateString('id-ID') : '-'}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-sm text-white mb-1 truncate" title={spk.spk_id}>{spk.spk_id}</h3>
-                    <p className="text-xs text-gray-400 font-medium mb-4 truncate">{spk.nama_customer}</p>
-                    
-                    <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-800/50">
-                      <div className="flex -space-x-2">
-                        <div className="w-6 h-6 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center text-[8px] font-bold text-gray-400">
-                          IMG
+                    {/* Top Section: 2 Columns */}
+                    <div className="flex gap-4 mb-4">
+                      {/* Left Column: Image */}
+                      <div className="w-2/5 min-w-[90px] max-w-[130px] aspect-square bg-[#0A0A0A] rounded-xl overflow-hidden shrink-0 relative border border-neutral-800/50">
+                        {previewUrl ? (
+                          <img src={previewUrl} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-neutral-600 transition-colors group-hover:border-neutral-700 bg-neutral-900/50">
+                            <ImageIcon size={24} className="mb-2 opacity-50" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest opacity-50 text-center leading-tight">No<br/>Preview</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Right Column: Info */}
+                      <div className="flex flex-col flex-1 py-1">
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {/* SPK ID Badge */}
+                          <span className="border border-mandiri-primary text-mandiri-primary px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-black bg-mandiri-primary/10">
+                            {maskedId}
+                          </span>
+                          {/* Date Badge */}
+                          <span className="bg-mandiri-primary text-black px-2 py-0.5 rounded-md text-[10px] sm:text-xs font-bold shadow-[0_0_10px_rgba(247,198,0,0.2)]">
+                            {spk.created_at?.toDate ? new Date(spk.created_at.toDate()).toLocaleDateString('id-ID', {day: '2-digit', month: 'short'}) : '-'}
+                          </span>
+                        </div>
+                        
+                        {/* Customer Name */}
+                        <h3 className="font-bold text-sm text-white mb-2 line-clamp-2 leading-snug break-words">{spk.nama_customer}</h3>
+                        
+                        {/* Deadline Badge */}
+                        <div className="mt-auto pt-1">
+                          <span className="border border-red-500 text-red-400 bg-red-950/20 px-2 py-1 rounded-md text-[10px] font-bold inline-flex items-center">
+                            <CalendarIcon size={12} className="mr-1 opacity-70" />
+                            Deadline: {spk.deadline_date ? new Date(spk.deadline_date).toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: '2-digit'}) : '-'}
+                          </span>
                         </div>
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-1 rounded-lg border uppercase whitespace-nowrap ${statusColor}`}>
-                        {status}
-                      </span>
+                    </div>
+                    
+                    {/* Segmented Line Bar */}
+                    <div className="mt-auto">
+                      <div className="flex gap-1 w-full h-1.5 mb-2">
+                        {PRODUCTION_STAGES.map((stage, idx) => {
+                          const isPast = idx < currentIndex;
+                          const isActive = idx === currentIndex;
+                          
+                          let colorClass = "bg-neutral-800"; // Future state
+                          if (isActive) colorClass = stage.activeColor;
+                          else if (isPast) colorClass = stage.pastColor;
+                          
+                          return (
+                            <div key={stage.label} className={`flex-1 rounded-full ${colorClass}`} title={isPast ? 'Selesai' : isActive ? 'Proses Saat Ini' : 'Belum Dilalui'}></div>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Current Status Text */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Status Saat Ini</span>
+                        <span className={`text-xs font-black uppercase tracking-wider ${PRODUCTION_STAGES[currentIndex].textColor}`}>
+                          {PRODUCTION_STAGES[currentIndex].label}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -163,7 +195,8 @@ export default function ViewAllSpkPage() {
             </div>
           )}
         </div>
-      </main>
+        </main>
+      </div>
 
       {/* Render Modal If SPK is Selected */}
       {selectedSpk && (
