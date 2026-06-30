@@ -21,6 +21,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       <main className="flex-1 relative flex flex-col h-full overflow-hidden">
         {children}
       </main>
+      <footer className="w-full py-3 bg-[#080808] border-t border-neutral-800 flex items-center justify-center gap-2 shrink-0 z-10">
+        <p className="text-xs text-gray-500 italic">powered by <span className="font-bold text-mandiri-primary not-italic">DNDR</span><span className="font-bold text-white not-italic">studio</span></p>
+        <img src="/logo_dndrstudio.svg" alt="DNDR Studio" className="h-4 opacity-80" />
+      </footer>
     </div>
   );
 }
@@ -38,6 +42,10 @@ function ProtectedSpkManagerRoute({ children }: { children: React.ReactNode }) {
       <main className="flex-1 relative flex flex-col h-full overflow-hidden">
         {children}
       </main>
+      <footer className="w-full py-3 bg-[#080808] border-t border-neutral-800 flex items-center justify-center gap-2 shrink-0 z-10">
+        <p className="text-xs text-gray-500 italic">powered by <span className="font-bold text-mandiri-primary not-italic">DNDR</span><span className="font-bold text-white not-italic">studio</span></p>
+        <img src="/logo_dndrstudio.svg" alt="DNDR Studio" className="h-4 opacity-80" />
+      </footer>
     </div>
   );
 }

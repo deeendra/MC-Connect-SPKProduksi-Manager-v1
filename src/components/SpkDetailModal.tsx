@@ -42,7 +42,7 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
                 {spk.status_produksi || 'ANTRIAN PRINT'}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white">{spk.spk_id}</h2>
+            <h2 className="text-xl sm:text-2xl font-black text-white">{spk.spk_id_masked || spk.spk_id}</h2>
             {spk.order_id && spk.tipe_pesanan === 'EX' && (
               <p className="text-xs text-gray-500 font-bold mt-1">Induk SPK: {spk.order_id}</p>
             )}
@@ -83,16 +83,6 @@ export default function SpkDetailModal({ spk, onClose }: SpkDetailModalProps) {
                 <User size={16} className="text-[#F7C600]" /> Data Pemesan
               </h3>
               <div className="space-y-3">
-                <div>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Nama Customer</p>
-                  <p className="text-sm text-white font-medium">{spk.nama_customer || '-'}</p>
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider flex items-center gap-1">
-                    <Phone size={12} /> Nomor HP
-                  </p>
-                  <p className="text-sm text-white font-medium">{spk.nomor_hp || '-'}</p>
-                </div>
                 <div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Customer ID</p>
                   <p className="text-sm text-white font-medium">{spk.customer_id || '-'}</p>

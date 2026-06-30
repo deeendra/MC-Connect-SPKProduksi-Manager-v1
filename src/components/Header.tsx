@@ -19,9 +19,7 @@ export default function Header() {
     <header className="bg-[#080808] border-b border-[#222] px-6 py-4 flex items-center justify-between shrink-0 z-10 shadow-md">
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-mandiri-primary rounded flex items-center justify-center font-bold text-black text-lg shadow-[0_0_15px_rgba(247,198,0,0.4)]">
-            M
-          </div>
+          <img src="/logo_mc_dndr.svg" alt="MC-Connect" className="w-8 h-8 drop-shadow-[0_0_10px_rgba(247,198,0,0.3)]" />
           <div>
             <h1 className="text-white font-extrabold text-lg leading-tight tracking-tight">MC-Connect</h1>
             <p className="text-mandiri-primary text-[10px] font-bold tracking-widest uppercase">SPK Manager</p>
