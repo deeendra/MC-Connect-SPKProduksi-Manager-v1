@@ -1,4 +1,4 @@
-import { X, Printer, ExternalLink, Calendar, Phone, User, Package, FileText, Image as ImageIcon } from 'lucide-react';
+import { X, Printer, ExternalLink, Calendar, User, Package, FileText, Image as ImageIcon } from 'lucide-react';
 import { useEffect } from 'react';
 
 const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL', 'XXXL', '4XL', '5XL', '6XL', 'ALL SIZE'];
