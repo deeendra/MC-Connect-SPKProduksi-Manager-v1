@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import LoginPage from './pages/LoginPage';
 import ViewAllSpkPage from './pages/ViewAllSpkPage';
 import SpkManagerPage from './pages/SpkManagerPage';
+import SharedSpkPage from './pages/SharedSpkPage';
 import Header from './components/Header';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -60,6 +61,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/shared/:encodedId" element={<SharedSpkPage />} />
       <Route 
         path="/" 
         element={
