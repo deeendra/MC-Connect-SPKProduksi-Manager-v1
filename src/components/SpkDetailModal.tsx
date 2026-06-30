@@ -65,15 +65,15 @@ export default function SpkDetailModal({ spk, onClose, isSharedView = false }: S
 
   const containerClasses = isSharedView 
     ? "bg-black/60 min-h-screen w-full flex justify-center p-0 sm:p-6" 
-    : "fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200";
+    : "fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-6 bg-black/60 backdrop-blur-md animate-in fade-in duration-200 touch-none";
 
   return (
     <div className={containerClasses}>
-      <div className={modalWrapperClasses}>
+      <div className={`${modalWrapperClasses} touch-auto`}>
         
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-neutral-800 bg-neutral-950/50 shrink-0">
-          <div>
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-neutral-800 bg-neutral-950/50 shrink-0 gap-4">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-3 mb-1">
               <span className="px-3 py-1 bg-[#F7C600]/20 text-[#F7C600] text-xs font-black rounded-lg uppercase tracking-wider border border-[#F7C600]/50">
                 {spk.tipe_pesanan}
@@ -82,7 +82,7 @@ export default function SpkDetailModal({ spk, onClose, isSharedView = false }: S
                 {spk.status_produksi || 'ANTRIAN PRINT'}
               </span>
             </div>
-            <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-2 mt-2 min-w-0 flex-1">
               <h2 className="text-xl sm:text-3xl font-black bg-gradient-to-r from-white to-[#F7C600] bg-clip-text text-transparent truncate">
                 {spk.spk_id_masked || spk.spk_id}
               </h2>
@@ -91,7 +91,7 @@ export default function SpkDetailModal({ spk, onClose, isSharedView = false }: S
                   navigator.clipboard.writeText(spk.spk_id_masked || spk.spk_id);
                   alert('SPK ID disalin ke clipboard!');
                 }}
-                className="p-1.5 sm:p-2 rounded-lg bg-neutral-800/50 hover:bg-[#F7C600]/20 text-gray-400 hover:text-[#F7C600] border border-transparent hover:border-[#F7C600]/50 transition-all shrink-0"
+                className="p-1.5 sm:p-2 rounded-lg bg-neutral-800/50 hover:bg-[#F7C600]/20 text-gray-400 hover:text-[#F7C600] border border-transparent hover:border-[#F7C600]/50 transition-all shrink-0 ml-1"
                 title="Salin ID"
               >
                 <Copy size={16} />
@@ -124,7 +124,7 @@ export default function SpkDetailModal({ spk, onClose, isSharedView = false }: S
         </div>
 
         {/* Content (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar space-y-6 sm:space-y-8 pb-10">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 custom-scrollbar space-y-6 sm:space-y-8 pb-10">
           
           {/* Metadata Section */}
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
